@@ -110,9 +110,12 @@ class App extends Component {
     for (let i = 0; i < Number(numProperties); i++) {
       const propertyMetadataURI = await this.state.contractProperty.methods.tokenURI(i).call()
       console.log(`Read web3 data for property ${i}:`, propertyMetadataURI)
-      const property = await this.fetchProperty(propertyMetadataURI)
-      console.log(`Fetched data for property ${propertyMetadataURI}:`, property)
-      properties.push({tokenId: i, ...property})
+      // If the URI is empty that is a deleted property.
+      if (propertyMetadataURI.length !== 0) {
+        const property = await this.fetchProperty(propertyMetadataURI)
+        console.log(`Fetched data for property ${propertyMetadataURI}:`, property)
+        properties.push({tokenId: i, ...property})
+      }
     }
 
     this.setState({properties})
@@ -129,7 +132,7 @@ class App extends Component {
   }
 
   render() {
-    return this.state.properties.length ? (
+    return (
       <div className="App">
         <header className="App-header">
           {
@@ -147,10 +150,15 @@ class App extends Component {
           <p>
             Radical Bodies
           </p>
-          <CardView elements={this.state.properties} onSelect={this.openBuyModal.bind(this)}/>
+          {
+            this.state.properties.length ?
+              <CardView elements={this.state.properties} onSelect={this.openBuyModal.bind(this)}/>
+            :
+              <p>No bodies yet. Why don't you register?</p>
+          }
         </header>
       </div>
-    ) : <p>No data!</p>
+    )
   }
 }
 
