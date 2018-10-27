@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography'
 const styles = {
   card: {
     minWidth: 275,
+    maxWidth: 275,
   },
   bullet: {
     display: 'inline-block',
@@ -26,7 +27,6 @@ const styles = {
 
 function SimpleCard(props) {
   const { classes, property } = props
-  const bull = <span className={classes.bullet}>•</span>
 
   return (
     <Card className={classes.card}>
@@ -35,14 +35,14 @@ function SimpleCard(props) {
           { property.name }
         </Typography>
         <Typography className={classes.pos} color="textSecondary">
-          { property.price }
+          { property.price } ETH
         </Typography>
         <Typography component="p">
-          { property.description }
+          { property.description.length > 100 ? `${property.description.substring(0,100)}...` : property.description }
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Learn More</Button>
+        <Button size="small">BUY</Button>
       </CardActions>
     </Card>
   )

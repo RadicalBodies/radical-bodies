@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Web3 from 'web3'
 import './App.css'
 
-import SimpleCard from './Card'
+import CardView from './CardView'
 
 import Market from './abi/Market.json'
 import Property from './abi/Property.json'
@@ -80,7 +80,7 @@ class App extends Component {
           <p>
             Radical Bodies
           </p>
-          {tempData.map(prop => <SimpleCard property={prop}/>)}
+          <CardView elements={tempData}/>
         </header>
       </div>
     )
