@@ -87,7 +87,8 @@ class App extends Component {
 
   async loadContracts() {
     const market = new window.web3.eth.Contract(Market, config.addressMarket)
-    const property = new window.web3.eth.Contract(Property, config.addressProperty)
+    const addressProperty = await market.token();
+    const property = new window.web3.eth.Contract(Property, addressProperty)
     this.setState({
       contractMarket: market,
       contractProperty: property,
