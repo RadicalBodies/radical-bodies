@@ -20,6 +20,7 @@ class App extends Component {
     buyModalOpen: false,
     propertyToBuy: undefined,
     propertyMetadata: undefined,
+    sellModalOpen: false,
   }
 
   async openBuyModal(property) {
@@ -44,6 +45,15 @@ class App extends Component {
     // Save the metadata
     const {name, description, email, price, intervals} = data
     const purchase = this.savePurchase({name, description, email})
+  }
+
+  async openSellModal() {
+  }
+
+  onSellModalClose() {
+  }
+
+  async onSell(id) {
   }
 
   async connectToWeb3() {
@@ -156,6 +166,7 @@ class App extends Component {
             :
               <p>No bodies yet. Why don't you register?</p>
           }
+          <Button size="small" onClick={() => this.openSellModal()}>SELL</Button>
         </header>
       </div>
     )
