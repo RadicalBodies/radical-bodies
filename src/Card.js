@@ -38,7 +38,7 @@ function SimpleCard(props) {
           { property.price } ETH
         </Typography>
         <Typography component="p">
-          { property.description.length > 100 ? `${property.description.substring(0,100)}...` : property.description }
+          { property.description ? (property.description.length > 100 ? `${property.description.substring(0,100)}...` : property.description) : "?" }
         </Typography>
       </CardContent>
       <CardActions>

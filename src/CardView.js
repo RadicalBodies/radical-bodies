@@ -32,6 +32,7 @@ class GuttersGrid extends React.Component {
   render() {
     const { classes, elements } = this.props
     const { spacing } = this.state
+    console.log('CardView got props:', elements)
 
     return (
       <Grid container className={classes.root} spacing={16}>
@@ -39,7 +40,7 @@ class GuttersGrid extends React.Component {
           <Grid container className={classes.demo} justify="center" spacing={Number(spacing)}>
             {
               elements.map(prop =>
-                <Grid key={prop.id} item>
+                <Grid key={prop._id} item>
                   <SimpleCard property={prop}/>
                 </Grid>
               )
