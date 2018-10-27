@@ -118,7 +118,7 @@ class App extends Component {
   }
 
   render() {
-    return this.state.properties.length ? (
+    return (
       <div className="App">
         <header className="App-header">
           {
@@ -136,10 +136,15 @@ class App extends Component {
           <p>
             Radical Bodies
           </p>
-          <CardView elements={this.state.properties} onSelect={this.openBuyModal.bind(this)}/>
+          {
+            this.state.properties.length ?
+              <CardView elements={this.state.properties} onSelect={this.openBuyModal.bind(this)}/>
+            :
+              <p>No bodies yet. Why don't you register?</p>
+          }
         </header>
       </div>
-    ) : <p>No data!</p>
+    )
   }
 }
 
