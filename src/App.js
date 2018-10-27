@@ -4,6 +4,8 @@ import './App.css'
 
 import SimpleCard from './Card'
 
+import MarketAbi from './abi/Market.json'
+
 class App extends Component {
   async componentDidMount() {
     // Modern dapp browsers...
@@ -18,6 +20,10 @@ class App extends Component {
         window.web3.eth.getBlockNumber().then(console.log)
         // Acccounts now exposed
         // window.web3.eth.sendTransaction({/* ... */})
+        //
+        const market = new window.web3.eth.Contract(MarketAbi, '0xa1cb05e2f211a0b680506fe3c08f7a19d7559b34')
+        console.log('Market:', market)
+        window.market = market
       } catch (error) {
         // User denied account access...
         console.error(error)
