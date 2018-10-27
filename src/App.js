@@ -13,6 +13,7 @@ import Property from './abi/Property.json'
 class App extends Component {
   state = {
     web3Connected: false,
+    web3Account: undefined,
     loading: true,
     properties: [],
     contractMarket: undefined,
@@ -39,11 +40,28 @@ class App extends Component {
     this.setState({buyModalOpen: false})
   }
 
-  // async onBuy(tokenId, price, numIntervals, metadata) {
   async onBuy(data) {
-    // Save the metadata
-    const {name, description, email, price, intervals} = data
-    const purchase = this.savePurchase({name, description, email})
+    console.log("onBuy:", data)
+    const {name, description, email, price, intervals, tokenId} = data
+
+    // Save the metadata to the database
+    const purchase = await this.savePurchase({name, description, email})
+    console.log("Saved new purchase data:", purchase)
+
+    // Convert the units
+    const priceInWei = window.web3.utils.toWei((price*10).toString(), "ether")
+    const priceInWei2 = window.web3.utils.toWei((price*100).toString(), "ether")
+
+    // Kick off the web3 transaction
+    const res = await this.state.contractMarket.methods.buy(
+      tokenId,
+      intervals,
+      priceInWei,
+      purchase._id
+    ).send({
+      from: this.state.web3Account,
+      value: priceInWei2,
+    })
   }
 
   async connectToWeb3() {
@@ -55,9 +73,10 @@ class App extends Component {
         await window.ethereum.enable()
         console.log('Web3 enabled!')
         console.log(window.web3)
-        window.web3.eth.getAccounts().then(console.log)
-        window.web3.eth.getBlockNumber().then(console.log)
-        this.setState({web3Connected: true})
+        // window.web3.eth.getAccounts().then(console.log)
+        // window.web3.eth.getBlockNumber().then(console.log)
+        const accounts = await window.web3.eth.getAccounts()
+        this.setState({web3Connected: true, web3Account: accounts[0]})
       } catch (error) {
         // User denied account access...
         console.error(error)
@@ -67,7 +86,8 @@ class App extends Component {
     else if (window.web3) {
       window.web3 = new Web3(window.web3.currentProvider)
       console.log('Legacy web3 detected!')
-      this.setState({web3Connected: true})
+      const accounts = await window.web3.eth.getAccounts()
+      this.setState({web3Connected: true, web3Account: accounts[0]})
     }
     // Non-dapp browsers...
     else {
@@ -110,12 +130,9 @@ class App extends Component {
     for (let i = 0; i < Number(numProperties); i++) {
       const propertyMetadataURI = await this.state.contractProperty.methods.tokenURI(i).call()
       console.log(`Read web3 data for property ${i}:`, propertyMetadataURI)
-      // If the URI is empty that is a deleted property.
-      if (propertyMetadataURI.length !== 0) {
-        const property = await this.fetchProperty(propertyMetadataURI)
-        console.log(`Fetched data for property ${propertyMetadataURI}:`, property)
-        properties.push({tokenId: i, ...property})
-      }
+      const property = await this.fetchProperty(propertyMetadataURI)
+      console.log(`Fetched data for property ${propertyMetadataURI}:`, property)
+      properties.push({tokenId: i, ...property})
     }
 
     this.setState({properties})
@@ -132,7 +149,7 @@ class App extends Component {
   }
 
   render() {
-    return (
+    return this.state.properties.length ? (
       <div className="App">
         <header className="App-header">
           {
@@ -150,15 +167,13 @@ class App extends Component {
           <p>
             Radical Bodies
           </p>
-          {
-            this.state.properties.length ?
-              <CardView elements={this.state.properties} onSelect={this.openBuyModal.bind(this)}/>
-            :
-              <p>No bodies yet. Why don't you register?</p>
-          }
+          <CardView elements={this.state.properties} onSelect={this.openBuyModal.bind(this)}/>
+          <p>
+            Account connected: {this.state.web3Account}
+          </p>
         </header>
       </div>
-    )
+    ) : <p>No data!</p>
   }
 }
 

@@ -36,6 +36,7 @@ class SimpleModal extends React.Component {
     email: '',
     price: '',
     intervals: '',
+    tokenId: undefined,
   }
 
   handleChange = name => event => {
@@ -44,12 +45,17 @@ class SimpleModal extends React.Component {
     })
   }
 
-  getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props, state) {
     const {
+      property,
       propertyMetadata,
-    } = this.props
-    const newPrice = window.web3.utils.fromWei(propertyMetadata.curPrice + propertyMetadata.epsilon,"ether")
-    return {price: newPrice}
+    } = props
+    console.log("Got property:", property)
+    const newPrice = window.web3.utils.fromWei(propertyMetadata.curPrice + propertyMetadata.epsilon, "ether")
+    return {
+      price: newPrice,
+      tokenId: property.tokenId,
+    }
   }
 
   render() {

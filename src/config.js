@@ -1,5 +1,5 @@
 export default {
-  addressMarket: '0x9d1dae5f2c68841d570af990e9a83c564dfb9c23',
-  addressProperty: '0xd28f500ea0ef5bb16bba7f3f9be2d86dffae6801',
+  addressMarket: '0x975f4ac23fcc9c39228cc20a2d4897c7b9bb39cc',
+  addressProperty: '0x90a3aa83b0da90abe2c33fadbe829cf74dfa59d9',
   baseUrl: 'http://localhost:8000',
 }
