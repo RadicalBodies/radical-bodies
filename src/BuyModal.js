@@ -18,7 +18,6 @@ function getModalStyle() {
 const styles = theme => ({
   paper: {
     position: 'absolute',
-    // width: theme.spacing.unit * 50,
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: theme.spacing.unit * 4,
@@ -32,7 +31,10 @@ const styles = theme => ({
 
 class SimpleModal extends React.Component {
   render() {
-    const { classes, open, handleClose, property} = this.props
+    const { classes, open, handleClose, property, propertyMetadata } = this.props
+    console.log("Metadata:", propertyMetadata)
+    const newPrice = window.web3.utils.fromWei(propertyMetadata.curPrice + propertyMetadata.epsilon,"ether")
+    console.log("min price:", newPrice)
 
     return (
       <div>
@@ -45,6 +47,7 @@ class SimpleModal extends React.Component {
           <div style={getModalStyle()} className={classes.paper}>
             <Typography variant="h6" id="modal-title">
               About {property.name ? property.name : "??"}
+              Price: {propertyMetadata.curPrice}
             </Typography>
             <Typography variant="subtitle1" id="simple-modal-description">
               {property.description ? property.description  : "This one is a mystery"}
@@ -59,9 +62,10 @@ class SimpleModal extends React.Component {
 		// value={this.state.age}
 		// onChange={this.handleChange('age')}
 		type="number"
+                defaultValue={newPrice}
 
                 // these three don't appear to be working =[
-                min="0"
+                min={newPrice}
                 max="100"
                 step="0.01"
 
@@ -116,6 +120,7 @@ SimpleModal.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   property: PropTypes.object.isRequired,
+  propertyMetadata: PropTypes.object.isRequired,
 }
 
 // We need an intermediary variable for handling the recursive nesting.

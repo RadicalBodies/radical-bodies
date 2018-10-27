@@ -19,11 +19,20 @@ class App extends Component {
     contractProperty: undefined,
     buyModalOpen: false,
     propertyToBuy: undefined,
+    propertyMetadata: undefined,
   }
 
-  openBuyModal(property) {
-    // const property = await this.fetchProperty(id)
-    this.setState({buyModalOpen: true, propertyToBuy: property})
+  async openBuyModal(property) {
+    // Fetch some additional metadata from web3 first
+    window.contract = this.state.contractMarket
+    const taxRate = await this.state.contractMarket.methods.taxRatePerInterval().call()
+    const epsilon = await this.state.contractMarket.methods.epsilon().call()
+    const curPrice = await this.state.contractMarket.methods.priceOf(property.tokenId).call()
+    this.setState({
+      buyModalOpen: true,
+      propertyToBuy: property,
+      propertyMetadata: {taxRate, epsilon, curPrice},
+    })
   }
 
   onBuyModalClose() {
@@ -81,14 +90,18 @@ class App extends Component {
     // Get the list of properties
     const numProperties = await this.state.contractProperty.methods.totalSupply().call()
     console.log(`Found ${numProperties} properties in web3 provider`)
-    // Why is it so awkward to do range() in JS?
-    const properties = [...Array(Number(numProperties)).keys()].map(i => this.state.contractProperty.methods.tokenURI(i).call())
-    console.log(properties)
-    const propertiesMetadata = await Promise.all(properties)
-    console.log(propertiesMetadata)
-    const res = await Promise.all(propertiesMetadata.map(p => this.fetchProperty(p)))
-    console.log(res)
-    this.setState({properties: res})
+
+    // Build an array of property data
+    const properties = []
+    for (let i = 0; i < Number(numProperties); i++) {
+      const propertyMetadataURI = await this.state.contractProperty.methods.tokenURI(i).call()
+      console.log(`Read web3 data for property ${i}:`, propertyMetadataURI)
+      const property = await this.fetchProperty(propertyMetadataURI)
+      console.log(`Fetched data for property ${propertyMetadataURI}:`, property)
+      properties.push({tokenId: i, ...property})
+    }
+
+    this.setState({properties})
   }
 
   async componentDidMount() {
@@ -112,6 +125,7 @@ class App extends Component {
                 onBuy={this.onBuy}
                 handleClose={this.onBuyModalClose.bind(this)}
                 property={this.state.propertyToBuy}
+                propertyMetadata={this.state.propertyMetadata}
               />
             :
               null
