@@ -18,10 +18,16 @@ class App extends Component {
     contractMarket: undefined,
     contractProperty: undefined,
     buyModalOpen: false,
+    propertyToBuy: undefined,
   }
 
-  async openBuyModal(id) {
-    this.setState({buyModalOpen: true, propertyToBuyId: id})
+  openBuyModal(property) {
+    // const property = await this.fetchProperty(id)
+    this.setState({buyModalOpen: true, propertyToBuy: property})
+  }
+
+  onBuyModalClose() {
+    this.setState({buyModalOpen: false})
   }
 
   async onBuy(id) {
@@ -99,7 +105,17 @@ class App extends Component {
     return this.state.properties.length ? (
       <div className="App">
         <header className="App-header">
-          <BuyModal open={this.state.buyModalOpen} onBuy={this.onBuy}/>
+          {
+            this.state.propertyToBuy ?
+              <BuyModal
+                open={this.state.buyModalOpen}
+                onBuy={this.onBuy}
+                handleClose={this.onBuyModalClose.bind(this)}
+                property={this.state.propertyToBuy}
+              />
+            :
+              null
+          }
           <p>
             Radical Bodies
           </p>

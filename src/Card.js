@@ -42,7 +42,7 @@ function SimpleCard(props) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" onClick={onSelect}>BUY</Button>
+        <Button size="small" onClick={() => onSelect(property)}>BUY</Button>
       </CardActions>
     </Card>
   )
