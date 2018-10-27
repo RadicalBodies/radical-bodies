@@ -2,37 +2,12 @@ import React, { Component } from 'react'
 import Web3 from 'web3'
 import './App.css'
 
+import config from './config'
+
 import CardView from './CardView'
 
 import Market from './abi/Market.json'
 import Property from './abi/Property.json'
-
-// const tempData = [
-//   {
-//     name: 'Lane Rettig',
-//     price: 1.25,
-//     description: 'I like to flirt and smoke weed.',
-//     owner: '',
-//   },
-//   {
-//     name: 'Deaner Eiger',
-//     price: 0.01,
-//     description: 'I am really really cheap.',
-//     owner: '0x43025Ebf69Bd7459AF00899C245a8434534AE3D7a',
-//   },
-//   {
-//     name: 'Amy Jung',
-//     price: 277.00,
-//     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-//     owner: '0x43025Ebf69Bd7459AF00899C245a8434534AE3D7a',
-//   },
-//   {
-//     name: 'axic',
-//     price: 22.22,
-//     description: ':)',
-//     owner: '0x67942789Cd7B7b9066F227FE23818B707B878e83',
-//   },
-// ]
 
 class App extends Component {
   state = {
@@ -73,8 +48,8 @@ class App extends Component {
   }
 
   async loadContracts() {
-    const market = new window.web3.eth.Contract(Market, '0x8ba8c289ee6b8fcd8a4501c3a85d1cdf4f14301c')
-    const property = new window.web3.eth.Contract(Property, '0x24f2c6cb2b50a695775e2a45cbbac29bd1908865')
+    const market = new window.web3.eth.Contract(Market, config.addressMarket)
+    const property = new window.web3.eth.Contract(Property, config.addressProperty)
     this.setState({
       contractMarket: market,
       contractProperty: property,
@@ -86,7 +61,7 @@ class App extends Component {
   }
 
   async fetchProperty(propId) {
-    const res = await fetch(`http://localhost:8000/listings/${propId}`)
+    const res = await fetch(`${config.baseUrl}/listings/${propId}`)
     const property = await res.json()
     return property
   }
