@@ -26,7 +26,7 @@ const styles = {
 }
 
 function SimpleCard(props) {
-  const { classes, property } = props
+  const { classes, property, onSelect } = props
 
   return (
     <Card className={classes.card}>
@@ -42,7 +42,7 @@ function SimpleCard(props) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">BUY</Button>
+        <Button size="small" onClick={onSelect}>BUY</Button>
       </CardActions>
     </Card>
   )
@@ -51,6 +51,7 @@ function SimpleCard(props) {
 SimpleCard.propTypes = {
   classes: PropTypes.object.isRequired,
   property: PropTypes.object.isRequired,
+  onSelect: PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(SimpleCard)

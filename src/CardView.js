@@ -30,7 +30,7 @@ class GuttersGrid extends React.Component {
   }
 
   render() {
-    const { classes, elements } = this.props
+    const { classes, elements, onSelect } = this.props
     const { spacing } = this.state
     console.log('CardView got props:', elements)
 
@@ -41,7 +41,7 @@ class GuttersGrid extends React.Component {
             {
               elements.map(prop =>
                 <Grid key={prop._id} item>
-                  <SimpleCard property={prop}/>
+                  <SimpleCard property={prop} onSelect={onSelect}/>
                 </Grid>
               )
             }
@@ -55,6 +55,7 @@ class GuttersGrid extends React.Component {
 GuttersGrid.propTypes = {
   classes: PropTypes.object.isRequired,
   elements: PropTypes.array.isRequired,
+  onSelect: PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(GuttersGrid)

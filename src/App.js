@@ -4,6 +4,7 @@ import './App.css'
 
 import config from './config'
 
+import BuyModal from './BuyModal'
 import CardView from './CardView'
 
 import Market from './abi/Market.json'
@@ -16,6 +17,14 @@ class App extends Component {
     properties: [],
     contractMarket: undefined,
     contractProperty: undefined,
+    buyModalOpen: false,
+  }
+
+  async openBuyModal(id) {
+    this.setState({buyModalOpen: true, propertyToBuyId: id})
+  }
+
+  async onBuy(id) {
   }
 
   async connectToWeb3() {
@@ -54,10 +63,6 @@ class App extends Component {
       contractMarket: market,
       contractProperty: property,
     })
-    // console.log('Market:', market)
-    // console.log('Property:', property)
-    // window.market = market // FIXME
-    // window.property = property // FIXME
   }
 
   async fetchProperty(propId) {
@@ -75,7 +80,6 @@ class App extends Component {
     console.log(properties)
     const propertiesMetadata = await Promise.all(properties)
     console.log(propertiesMetadata)
-    // const res = await this.fetchProperty(propertiesMetadata[0])
     const res = await Promise.all(propertiesMetadata.map(p => this.fetchProperty(p)))
     console.log(res)
     this.setState({properties: res})
@@ -95,10 +99,11 @@ class App extends Component {
     return this.state.properties.length ? (
       <div className="App">
         <header className="App-header">
+          <BuyModal open={this.state.buyModalOpen} onBuy={this.onBuy}/>
           <p>
             Radical Bodies
           </p>
-          <CardView elements={this.state.properties}/>
+          <CardView elements={this.state.properties} onSelect={this.openBuyModal.bind(this)}/>
         </header>
       </div>
     ) : <p>No data!</p>
