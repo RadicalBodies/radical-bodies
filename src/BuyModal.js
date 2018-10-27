@@ -30,11 +30,38 @@ const styles = theme => ({
 })
 
 class SimpleModal extends React.Component {
-  render() {
-    const { classes, open, handleClose, property, propertyMetadata } = this.props
-    console.log("Metadata:", propertyMetadata)
+  state = {
+    name: '',
+    description: '',
+    email: '',
+    price: '',
+    intervals: '',
+  }
+
+  handleChange = name => event => {
+    this.setState({
+      [name]: event.target.value,
+    })
+  }
+
+  getDerivedStateFromProps(props, state) {
+    const {
+      propertyMetadata,
+    } = this.props
     const newPrice = window.web3.utils.fromWei(propertyMetadata.curPrice + propertyMetadata.epsilon,"ether")
-    console.log("min price:", newPrice)
+    return {price: newPrice}
+  }
+
+  render() {
+    const {
+      classes,
+      open,
+      handleClose,
+      property,
+      propertyMetadata,
+      onBuy,
+    } = this.props
+    console.log("Metadata:", propertyMetadata)
 
     return (
       <div>
@@ -59,13 +86,12 @@ class SimpleModal extends React.Component {
 	      <TextField
 		// id="standard-number"
 		label="Reserve price"
-		// value={this.state.age}
-		// onChange={this.handleChange('age')}
+		value={this.state.price}
+		onChange={this.handleChange('price')}
 		type="number"
-                defaultValue={newPrice}
 
                 // these three don't appear to be working =[
-                min={newPrice}
+                min={this.state.price}
                 max="100"
                 step="0.01"
 
@@ -79,6 +105,8 @@ class SimpleModal extends React.Component {
                 required
                 // id="standard-required"
                 label="Email"
+		value={this.state.email}
+		onChange={this.handleChange('email')}
                 className={classes.textField}
                 margin="normal"
               />
@@ -86,6 +114,8 @@ class SimpleModal extends React.Component {
                 required
                 // id="standard-required"
                 label="Description"
+		value={this.state.description}
+		onChange={this.handleChange('description')}
                 className={classes.textField}
                 margin="normal"
               />
@@ -103,10 +133,12 @@ class SimpleModal extends React.Component {
                 required
                 // id="standard-required"
                 label="End Time"
+		value={this.state.intervals}
+		onChange={this.handleChange('intervals')}
                 className={classes.textField}
                 margin="normal"
               />
-              <Button size="large">PURCHASE</Button>
+              <Button size="large" onClick={() => onBuy(this.state)}>PURCHASE</Button>
             </form>
           </div>
         </Modal>
@@ -121,6 +153,7 @@ SimpleModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
   property: PropTypes.object.isRequired,
   propertyMetadata: PropTypes.object.isRequired,
+  onBuy: PropTypes.func.isRequired,
 }
 
 // We need an intermediary variable for handling the recursive nesting.

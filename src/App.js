@@ -39,7 +39,11 @@ class App extends Component {
     this.setState({buyModalOpen: false})
   }
 
-  async onBuy(id) {
+  // async onBuy(tokenId, price, numIntervals, metadata) {
+  async onBuy(data) {
+    // Save the metadata
+    const {name, description, email, price, intervals} = data
+    const purchase = this.savePurchase({name, description, email})
   }
 
   async connectToWeb3() {
@@ -78,6 +82,16 @@ class App extends Component {
       contractMarket: market,
       contractProperty: property,
     })
+  }
+
+  async savePurchase(purchase) {
+    const res = await fetch(`${config.baseUrl}/purchases/`, {
+      method: 'post',
+      body: JSON.stringify(purchase),
+    })
+    const purchaseData = await res.json()
+    console.log("Created purchase:", purchaseData)
+    return purchaseData
   }
 
   async fetchProperty(propId) {
@@ -122,7 +136,7 @@ class App extends Component {
             this.state.propertyToBuy ?
               <BuyModal
                 open={this.state.buyModalOpen}
-                onBuy={this.onBuy}
+                onBuy={this.onBuy.bind(this)}
                 handleClose={this.onBuyModalClose.bind(this)}
                 property={this.state.propertyToBuy}
                 propertyMetadata={this.state.propertyMetadata}
