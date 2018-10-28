@@ -45,8 +45,11 @@ class SimpleModal extends React.Component {
       open,
       handleClose,
       property,
+      res,
       // propertyMetadata,
     } = this.props
+
+    console.log("Got tx data:", res)
 
     return (
       <div>
@@ -58,7 +61,10 @@ class SimpleModal extends React.Component {
         >
           <div style={getModalStyle()} className={classes.paper}>
             <Typography variant="h6" id="modal-title">
-              You successfully bought {property.name ? property.name : "??"}
+              You successfully bought {property.name ? property.name : "??"}.
+            </Typography>
+            <Typography variant="h7">
+              <a href={`https://rinkeby.etherscan.io/tx/${res.transactionHash}`}>View transaction</a>
             </Typography>
           </div>
         </Modal>
@@ -72,6 +78,7 @@ SimpleModal.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   property: PropTypes.object.isRequired,
+  res: PropTypes.object.isRequired,
   // propertyMetadata: PropTypes.object.isRequired,
   // onBuy: PropTypes.func.isRequired,
 }

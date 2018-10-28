@@ -52,9 +52,6 @@ class App extends Component {
 
     // Convert the units
     const priceInWei = window.web3.utils.toWei(price, "ether")
-    // const priceInWei2 = window.web3.utils.toWei(price, "ether")
-    // const priceInWei = window.web3.utils.toWei((price*10).toString(), "ether")
-    // const priceInWei2 = window.web3.utils.toWei((price*100).toString(), "ether")
 
     // Kick off the web3 transaction
     const res = await this.state.contractMarket.methods.buy(
@@ -70,6 +67,7 @@ class App extends Component {
     this.setState({
       buyModalOpen: false,
       successModalOpen: true,
+      web3Result: res,
     })
   }
 
@@ -145,7 +143,13 @@ class App extends Component {
       console.log(`Read web3 data for property ${i}:`, propertyMetadataURI)
       const property = await this.fetchProperty(propertyMetadataURI)
       console.log(`Fetched data for property ${propertyMetadataURI}:`, property)
-      properties.push({tokenId: i, ...property})
+
+      // Get the price
+      let curPrice = await this.state.contractMarket.methods.priceOf(i).call()
+      curPrice = window.web3.utils.fromWei(curPrice, "ether")
+      console.log(`Fetched price for property ${i}:`, curPrice)
+
+      properties.push({tokenId: i, ...property, price: curPrice})
     }
 
     this.setState({properties})
@@ -179,11 +183,12 @@ class App extends Component {
               null
           }
           {
-            this.state.propertyToBuy ?
+            this.state.web3Result && this.state.propertyToBuy ?
               <SuccessModal
                 open={this.state.successModalOpen}
                 handleClose={this.onCloseSuccess.bind(this)}
                 property={this.state.propertyToBuy}
+                res={this.state.web3Result}
               />
               :
                 null

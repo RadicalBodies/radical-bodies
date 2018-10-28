@@ -39,6 +39,7 @@ class SimpleModal extends React.Component {
     description: '',
     email: '',
     price: '',
+    totalPrice: '',
     intervals: '',
     tokenId: undefined,
   }
@@ -47,6 +48,13 @@ class SimpleModal extends React.Component {
     this.setState({
       [name]: event.target.value,
     })
+  }
+
+  async componentDidMount() {
+    // Update the total price
+  }
+
+  async updateTotalPrice() {
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -170,8 +178,11 @@ class SimpleModal extends React.Component {
             </Grid>
             </Grid>
             </Grid>
-        <Grid item xs={12}>
-              <Button size="large" onClick={() => onBuy(this.state)}>PURCHASE</Button>
+              <Grid item xs={12}>
+                <p>TOTAL PRICE: {this.state.totalPrice}</p>
+              </Grid>
+              <Grid item xs={12}>
+                <Button size="large" onClick={() => onBuy(this.state)}>PURCHASE</Button>
               </Grid>
               </Grid>
             </form>
@@ -189,6 +200,7 @@ SimpleModal.propTypes = {
   property: PropTypes.object.isRequired,
   propertyMetadata: PropTypes.object.isRequired,
   onBuy: PropTypes.func.isRequired,
+  contractMarket: PropTypes.func.isRequired,
 }
 
 // We need an intermediary variable for handling the recursive nesting.
