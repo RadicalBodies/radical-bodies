@@ -51,7 +51,8 @@ class SimpleModal extends React.Component {
       propertyMetadata,
     } = props
     console.log("Got property:", property)
-    const newPrice = window.web3.utils.fromWei(propertyMetadata.curPrice + propertyMetadata.epsilon, "ether")
+    console.log("Metadata:", propertyMetadata)
+    const newPrice = window.web3.utils.fromWei((Number(propertyMetadata.curPrice) + Number(propertyMetadata.epsilon)).toString(), "ether")
     return {
       price: newPrice,
       tokenId: property.tokenId,
@@ -67,7 +68,6 @@ class SimpleModal extends React.Component {
       propertyMetadata,
       onBuy,
     } = this.props
-    console.log("Metadata:", propertyMetadata)
 
     return (
       <div>
@@ -80,7 +80,7 @@ class SimpleModal extends React.Component {
           <div style={getModalStyle()} className={classes.paper}>
             <Typography variant="h6" id="modal-title">
               About {property.name ? property.name : "??"}
-              Price: {propertyMetadata.curPrice}
+              Price: {window.web3.utils.fromWei(propertyMetadata.curPrice, "ether")}
             </Typography>
             <Typography variant="subtitle1" id="simple-modal-description">
               {property.description ? property.description  : "This one is a mystery"}

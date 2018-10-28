@@ -6,6 +6,7 @@ import config from './config'
 
 import BuyModal from './BuyModal'
 import CardView from './CardView'
+import SuccessModal from './SuccessModal'
 
 import Market from './abi/Market.json'
 import Property from './abi/Property.json'
@@ -21,6 +22,7 @@ class App extends Component {
     buyModalOpen: false,
     propertyToBuy: undefined,
     propertyMetadata: undefined,
+    successModalOpen: false,
   }
 
   async openBuyModal(property) {
@@ -62,6 +64,15 @@ class App extends Component {
       from: this.state.web3Account,
       value: priceInWei2,
     })
+    console.log(res)
+    this.setState({
+      buyModalOpen: false,
+      successModalOpen: true,
+    })
+  }
+
+  onCloseSuccess() {
+    this.setState({successModalOpen: false})
   }
 
   async connectToWeb3() {
@@ -149,6 +160,7 @@ class App extends Component {
   }
 
   render() {
+    // const { classes } = this.props
     return this.state.properties.length ? (
       <div className="App">
         <header className="App-header">
@@ -163,6 +175,16 @@ class App extends Component {
               />
             :
               null
+          }
+          {
+            this.state.propertyToBuy ?
+              <SuccessModal
+                open={this.state.successModalOpen}
+                handleClose={this.onCloseSuccess.bind(this)}
+                property={this.state.propertyToBuy}
+              />
+              :
+                null
           }
           <p>
             Radical Bodies
