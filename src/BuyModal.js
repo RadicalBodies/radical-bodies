@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography'
 import Modal from '@material-ui/core/Modal'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
+import Grid from '@material-ui/core/Grid'
 
 function getModalStyle() {
   return {
@@ -27,6 +28,9 @@ const styles = theme => ({
     marginRight: theme.spacing.unit,
     width: 200,
   },
+  root: {
+    flexGrow: 1,
+  },
 })
 
 class SimpleModal extends React.Component {
@@ -46,6 +50,10 @@ class SimpleModal extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
+    // Only do this once! This is messy
+    if (state.price)
+      return null
+
     const {
       property,
       propertyMetadata,
@@ -80,15 +88,22 @@ class SimpleModal extends React.Component {
           <div style={getModalStyle()} className={classes.paper}>
             <Typography variant="h6" id="modal-title">
               About {property.name ? property.name : "??"}
-              Price: {window.web3.utils.fromWei(propertyMetadata.curPrice, "ether")}
+            </Typography>
+            <Typography variant="subtitle1" id="simple-modal-description">
+              Current Price: {window.web3.utils.fromWei(propertyMetadata.curPrice, "ether")} ETH
             </Typography>
             <Typography variant="subtitle1" id="simple-modal-description">
               {property.description ? property.description  : "This one is a mystery"}
             </Typography>
+            <p/>
             <Typography variant="h6" id="modal-title">
               Purchase {property.name ? property.name : "??"}'s body
             </Typography>
             <form className={classes.container} noValidate autoComplete="off">
+      <Grid container className={classes.root} spacing={16}>
+        <Grid item xs={12}>
+          <Grid container className={classes.demo} justify="center" spacing={16}>
+            <Grid item>
 	      <TextField
 		// id="standard-number"
 		label="Reserve price"
@@ -107,6 +122,8 @@ class SimpleModal extends React.Component {
 		}}
 		margin="normal"
 	      />
+            </Grid>
+            <Grid item>
               <TextField
                 required
                 // id="standard-required"
@@ -116,6 +133,8 @@ class SimpleModal extends React.Component {
                 className={classes.textField}
                 margin="normal"
               />
+            </Grid>
+            <Grid item>
               <TextField
                 required
                 // id="standard-required"
@@ -125,6 +144,8 @@ class SimpleModal extends React.Component {
                 className={classes.textField}
                 margin="normal"
               />
+            </Grid>
+            <Grid item>
               <TextField
                 required
                 // id="standard-read-only-input"
@@ -135,6 +156,8 @@ class SimpleModal extends React.Component {
                   readOnly: true,
                 }}
               />
+            </Grid>
+            <Grid item>
               <TextField
                 required
                 // id="standard-required"
@@ -144,7 +167,13 @@ class SimpleModal extends React.Component {
                 className={classes.textField}
                 margin="normal"
               />
+            </Grid>
+            </Grid>
+            </Grid>
+        <Grid item xs={12}>
               <Button size="large" onClick={() => onBuy(this.state)}>PURCHASE</Button>
+              </Grid>
+              </Grid>
             </form>
           </div>
         </Modal>

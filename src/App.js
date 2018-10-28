@@ -51,8 +51,10 @@ class App extends Component {
     console.log("Saved new purchase data:", purchase)
 
     // Convert the units
-    const priceInWei = window.web3.utils.toWei((price*10).toString(), "ether")
-    const priceInWei2 = window.web3.utils.toWei((price*100).toString(), "ether")
+    const priceInWei = window.web3.utils.toWei(price, "ether")
+    // const priceInWei2 = window.web3.utils.toWei(price, "ether")
+    // const priceInWei = window.web3.utils.toWei((price*10).toString(), "ether")
+    // const priceInWei2 = window.web3.utils.toWei((price*100).toString(), "ether")
 
     // Kick off the web3 transaction
     const res = await this.state.contractMarket.methods.buy(
@@ -62,7 +64,7 @@ class App extends Component {
       purchase._id
     ).send({
       from: this.state.web3Account,
-      value: priceInWei2,
+      value: priceInWei*2,
     })
     console.log(res)
     this.setState({
