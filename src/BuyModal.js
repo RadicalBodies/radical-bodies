@@ -42,6 +42,8 @@ class SimpleModal extends React.Component {
     totalPrice: '',
     intervals: '',
     tokenId: undefined,
+    periodStart: '',
+    tax: '',
   }
 
   handleChange = name => event => {
@@ -52,9 +54,28 @@ class SimpleModal extends React.Component {
 
   async componentDidMount() {
     // Update the total price
+    this.updateTotalPrice()
   }
 
   async updateTotalPrice() {
+    const res = await this.props.contractMarket.methods.calculatePrice(
+      this.props.property.tokenId,
+      this.state.intervals,
+      window.web3.utils.toWei(this.state.price, "ether"),
+    ).call()
+    console.log("Got result from calculatePrice:", res)
+    const {periodStart, price, tax} = res
+    const periodStartDate = new Date(periodStart * 1000)
+    const periodStartString = `${periodStartDate.getHours()}:${periodStartDate.getMinutes()}`
+    // console.log("periodStart:", periodStart)
+    // console.log("date:", new Date(periodStart * 1000))
+    // console.log("date:", (new Date(periodStart * 1000)).toString())
+    this.setState({
+      // periodStart: new (Date(periodStart * 1000)).toString(),
+      periodStart: periodStartString,
+      price: window.web3.utils.fromWei(price, "ether"),
+      tax,
+    })
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -108,82 +129,80 @@ class SimpleModal extends React.Component {
               Purchase {property.name ? property.name : "??"}'s body
             </Typography>
             <form className={classes.container} noValidate autoComplete="off">
-      <Grid container className={classes.root} spacing={16}>
-        <Grid item xs={12}>
-          <Grid container className={classes.demo} justify="center" spacing={16}>
-            <Grid item>
-	      <TextField
-		// id="standard-number"
-		label="Reserve price"
-		value={this.state.price}
-		onChange={this.handleChange('price')}
-		type="number"
+              <Grid container className={classes.root} spacing={16}>
+                <Grid item xs={12}>
+                  <Grid container className={classes.demo} justify="center" spacing={16}>
+                    <Grid item>
+                      <TextField
+                        // id="standard-number"
+                        label="Reserve price"
+                        value={this.state.price}
+                        onChange={this.handleChange('price')}
+                        type="number"
 
-                // these three don't appear to be working =[
-                min={this.state.price}
-                max="100"
-                step="0.01"
+                        // these three don't appear to be working =[
+                        min={this.state.price}
+                        max="100"
+                        step="0.01"
 
-		className={classes.textField}
-		InputLabelProps={{
-		  shrink: true,
-		}}
-		margin="normal"
-	      />
-            </Grid>
-            <Grid item>
-              <TextField
-                required
-                // id="standard-required"
-                label="Email"
-		value={this.state.email}
-		onChange={this.handleChange('email')}
-                className={classes.textField}
-                margin="normal"
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                required
-                // id="standard-required"
-                label="Description"
-		value={this.state.description}
-		onChange={this.handleChange('description')}
-                className={classes.textField}
-                margin="normal"
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                required
-                // id="standard-read-only-input"
-                label="Start Time"
-                className={classes.textField}
-                margin="normal"
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                required
-                // id="standard-required"
-                label="End Time"
-		value={this.state.intervals}
-		onChange={this.handleChange('intervals')}
-                className={classes.textField}
-                margin="normal"
-              />
-            </Grid>
-            </Grid>
-            </Grid>
-              <Grid item xs={12}>
-                <p>TOTAL PRICE: {this.state.totalPrice}</p>
-              </Grid>
-              <Grid item xs={12}>
-                <Button size="large" onClick={() => onBuy(this.state)}>PURCHASE</Button>
-              </Grid>
+                        className={classes.textField}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        margin="normal"
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        required
+                        label="Email"
+                        value={this.state.email}
+                        onChange={this.handleChange('email')}
+                        className={classes.textField}
+                        margin="normal"
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        required
+                        label="Description"
+                        value={this.state.description}
+                        onChange={this.handleChange('description')}
+                        className={classes.textField}
+                        margin="normal"
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        required
+                        label="Start Time"
+                        type="time"
+                        value={this.state.periodStart}
+                        className={classes.textField}
+                        margin="normal"
+                        InputProps={{
+                          readOnly: true,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        required
+                        label="End Time"
+                        value={this.state.intervals}
+                        onChange={this.handleChange('intervals')}
+                        className={classes.textField}
+                        margin="normal"
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  <p>TOTAL PRICE: {this.state.totalPrice}</p>
+                </Grid>
+                <Grid item xs={12}>
+                  <Button size="large" onClick={() => onBuy(this.state)}>PURCHASE</Button>
+                </Grid>
               </Grid>
             </form>
           </div>
@@ -200,7 +219,7 @@ SimpleModal.propTypes = {
   property: PropTypes.object.isRequired,
   propertyMetadata: PropTypes.object.isRequired,
   onBuy: PropTypes.func.isRequired,
-  contractMarket: PropTypes.func.isRequired,
+  contractMarket: PropTypes.object.isRequired,
 }
 
 // We need an intermediary variable for handling the recursive nesting.

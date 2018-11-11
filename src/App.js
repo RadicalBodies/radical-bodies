@@ -171,13 +171,14 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           {
-            this.state.propertyToBuy ?
+            this.state.propertyToBuy && this.state.contractMarket ?
               <BuyModal
                 open={this.state.buyModalOpen}
                 onBuy={this.onBuy.bind(this)}
                 handleClose={this.onBuyModalClose.bind(this)}
                 property={this.state.propertyToBuy}
                 propertyMetadata={this.state.propertyMetadata}
+                contractMarket={this.state.contractMarket}
               />
             :
               null
